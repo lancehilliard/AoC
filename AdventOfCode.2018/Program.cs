@@ -16,16 +16,16 @@ namespace AdventOfCode._2018 {
 
             //1.2
             var lastFrequency = default(int);
-            var reachedFrequencies = new List<int>();
+            var reachedFrequencyCounts = new SortedDictionary<int, short>();
             var duplicatedFrequency = default(int?);
             while (!duplicatedFrequency.HasValue) {
                 foreach (var frequencyDrift in frequencyDrifts) {
                     lastFrequency = lastFrequency + frequencyDrift;
-                    if (reachedFrequencies.Contains(lastFrequency)) {
+                    if (reachedFrequencyCounts.ContainsKey(lastFrequency)) {
                         duplicatedFrequency = lastFrequency;
                         break;
                     }
-                    reachedFrequencies.Add(lastFrequency);
+                    reachedFrequencyCounts[lastFrequency] = 1;
                 }
             }
             Report($"Repeated frequency is {lastFrequency}.");
