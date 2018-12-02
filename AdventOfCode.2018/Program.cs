@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -11,9 +12,24 @@ namespace AdventOfCode._2018 {
         static void Main() {
             Timer.Start();
             Day1();
+            Day2();
             Console.WriteLine($"\nFinished.");
             Console.Write($"Total Runtime: {Timer.Elapsed}");
             Console.ReadKey();
+        }
+
+        private static void Day2() {
+            var boxIds = File.ReadLines("inputs/Day2Input.txt");
+            var twoCount = default(int);
+            var threeCount = default(int);
+            foreach (var boxId in boxIds) {
+                var chars = boxId.ToCharArray();
+                var charCounts = chars.Select(x => chars.Count(y => x == y)).ToList();
+                twoCount = twoCount + (charCounts.Contains(2) ? 1 : 0);
+                threeCount = threeCount + (charCounts.Contains(3) ? 1 : 0);
+            }
+            var checkSum = twoCount * threeCount;
+            Report($"Checksum: {checkSum}");
         }
 
         static void Day1() {
