@@ -7,16 +7,87 @@ using System.Runtime.CompilerServices;
 
 namespace AdventOfCode._2018 {
     static class Program {
+        class FabricClaim {
+            public int Id { get; set; }
+            public int FirstColumn { get; set; }
+            public int FirstRow { get; set; }
+            public int Width { get; set; }
+            public int Height { get; set; }
+
+            public int LastRow => FirstRow + Height - 1;
+            public int LastColumn => FirstColumn + Width - 1;
+
+            bool CoversRow(int rowNum) {
+                return FirstRow <= rowNum && LastRow >= rowNum;
+            }
+
+            bool CoversColumn(int columnNum) {
+                return FirstColumn <= columnNum && LastColumn >= columnNum;
+            }
+
+            public bool CoversGridLocation(int gridColumn, int gridRow) {
+                return CoversColumn(gridColumn) && CoversRow(gridRow);
+            }
+        }
         static readonly Stopwatch Timer = new Stopwatch();
         static TimeSpan _lastElapsedReported;
         static void Main() {
             Timer.Start();
             Day1();
             Day2();
+            Day3();
             Console.WriteLine($"\nFinished.");
             Console.Write($"Total Runtime: {Timer.Elapsed}");
             Console.ReadKey();
         }
+
+        private static void Day3() {
+            var inputs = File.ReadLines("inputs/Day3Input.txt");
+            var fabricClaims = new List<FabricClaim>();
+            foreach (var input in inputs) {
+                var atSignParts = input.Split("@");
+                var colonParts = atSignParts[1].Split(":");
+                var commaParts = colonParts[0].Split(",");
+                var xParts = colonParts[1].Split("x");
+                var id = Convert.ToInt32(atSignParts[0].Replace("#",string.Empty).Trim());
+                var firstColumn = Convert.ToInt32(commaParts[0].Trim())+1;
+                var firstRow = Convert.ToInt32(commaParts[1].Trim())+1;
+                var width = Convert.ToInt32(xParts[0].Trim());
+                var height = Convert.ToInt32(xParts[1].Trim());
+                var fabricClaim = new FabricClaim{Id=id,FirstColumn = firstColumn,FirstRow = firstRow, Width = width,Height = height};
+                fabricClaims.Add(fabricClaim);
+            }
+            var gridWidth = fabricClaims.Max(x=>x.LastColumn);
+            var gridHeight = fabricClaims.Max(x=>x.LastRow);
+            var inchesWithOverlap = 0;
+            for (int gridRow = 1; gridRow <= gridHeight; gridRow++) {
+                for (int gridColumn = 1; gridColumn <= gridWidth; gridColumn++) {
+                    if (fabricClaims.Count(x => x.CoversGridLocation(gridColumn, gridRow)) > 1) {
+                        inchesWithOverlap = inchesWithOverlap + 1;
+                    }
+                }
+            }
+            Report($"Inches with overlap: {inchesWithOverlap}");
+
+            foreach (var fabricClaim in fabricClaims) {
+                var claimOverlapsAnotherClaim = false;
+                for (int gridRow = fabricClaim.FirstRow; gridRow <= fabricClaim.LastRow; gridRow++) {
+                    for (int gridColumn = fabricClaim.FirstColumn; gridColumn <= fabricClaim.LastColumn; gridColumn++) {
+                        if (fabricClaims.Count(x => x.CoversGridLocation(gridColumn, gridRow)) > 1) {
+                            claimOverlapsAnotherClaim = true;
+                        }
+                    }
+                }
+
+                if (!claimOverlapsAnotherClaim) {
+                    Report($"Claim that does not overlap: {fabricClaim.Id}");
+                    break;
+                }
+            }
+            
+        }
+
+
 
         private static void Day2() {
             var boxIds = File.ReadLines("inputs/Day2Input.txt").OrderBy(x => x).ToList();
