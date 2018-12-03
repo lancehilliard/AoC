@@ -8,14 +8,22 @@ using System.Runtime.CompilerServices;
 namespace AdventOfCode._2018 {
     static class Program {
         class FabricClaim {
+            private readonly int _width;
+            private readonly int _height;
+
+            public FabricClaim(int id, int firstColumn, int firstRow, int width, int height) {
+                Id = id;
+                FirstColumn = firstColumn;
+                FirstRow = firstRow;
+                _width = width;
+                _height = height;
+            }
             public int Id { get; set; }
             public int FirstColumn { get; set; }
             public int FirstRow { get; set; }
-            public int Width { get; set; }
-            public int Height { get; set; }
 
-            public int LastRow => FirstRow + Height - 1;
-            public int LastColumn => FirstColumn + Width - 1;
+            public int LastRow => FirstRow + _height - 1;
+            public int LastColumn => FirstColumn + _width - 1;
 
             bool CoversRow(int rowNum) {
                 return FirstRow <= rowNum && LastRow >= rowNum;
@@ -61,7 +69,7 @@ namespace AdventOfCode._2018 {
                 var firstRow = Convert.ToInt32(commaParts[1].Trim())+1;
                 var width = Convert.ToInt32(xParts[0].Trim());
                 var height = Convert.ToInt32(xParts[1].Trim());
-                var fabricClaim = new FabricClaim{Id=id,FirstColumn = firstColumn,FirstRow = firstRow, Width = width,Height = height};
+                var fabricClaim = new FabricClaim(id, firstColumn, firstRow, width, height);
                 fabricClaims.Add(fabricClaim);
             }
             var gridWidth = fabricClaims.Max(x=>x.LastColumn);
