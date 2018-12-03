@@ -21,6 +21,13 @@ namespace AdventOfCode._2018 {
                 return FirstRow <= rowNum && LastRow >= rowNum;
             }
 
+            IEnumerable<int> CoveredRows => Enumerable.Range(FirstRow,LastRow-FirstRow+1);
+            IEnumerable<int> CoveredColumns => Enumerable.Range(FirstColumn,LastColumn-FirstColumn+1);
+
+            public bool Overlaps(FabricClaim other) {
+                return other.CoveredColumns.Intersect(CoveredColumns).Any() || other.CoveredRows.Intersect(CoveredRows).Any();
+            }
+
             bool CoversColumn(int columnNum) {
                 return FirstColumn <= columnNum && LastColumn >= columnNum;
             }
@@ -59,35 +66,30 @@ namespace AdventOfCode._2018 {
             }
             var gridWidth = fabricClaims.Max(x=>x.LastColumn);
             var gridHeight = fabricClaims.Max(x=>x.LastRow);
-            var inchesWithOverlap = 0;
-            for (int gridRow = 1; gridRow <= gridHeight; gridRow++) {
-                for (int gridColumn = 1; gridColumn <= gridWidth; gridColumn++) {
-                    if (fabricClaims.Count(x => x.CoversGridLocation(gridColumn, gridRow)) > 1) {
-                        inchesWithOverlap = inchesWithOverlap + 1;
-                    }
-                }
-            }
-            Report($"Inches with overlap: {inchesWithOverlap}");
-
+            var claimIdWithNoOverlap = default(int);
+            var squaresWithOverlap = new bool[gridWidth, gridHeight];
             foreach (var fabricClaim in fabricClaims) {
                 var claimOverlapsAnotherClaim = false;
-                for (int gridRow = fabricClaim.FirstRow; gridRow <= fabricClaim.LastRow; gridRow++) {
-                    for (int gridColumn = fabricClaim.FirstColumn; gridColumn <= fabricClaim.LastColumn; gridColumn++) {
-                        if (fabricClaims.Count(x => x.CoversGridLocation(gridColumn, gridRow)) > 1) {
+                var relevantFabricClaims = fabricClaims.Where(x => x.Overlaps(fabricClaim)).ToList();
+                for (var gridRow = fabricClaim.FirstRow; gridRow <= fabricClaim.LastRow; gridRow++) {
+                    for (var gridColumn = fabricClaim.FirstColumn; gridColumn <= fabricClaim.LastColumn; gridColumn++) {
+                        if (relevantFabricClaims.Count(x => x.CoversGridLocation(gridColumn, gridRow)) > 1) {
+                            squaresWithOverlap[gridColumn-1, gridRow-1] = true;
                             claimOverlapsAnotherClaim = true;
                         }
                     }
                 }
 
                 if (!claimOverlapsAnotherClaim) {
-                    Report($"Claim that does not overlap: {fabricClaim.Id}");
-                    break;
+                    claimIdWithNoOverlap = fabricClaim.Id;
                 }
             }
-            
+
+            var inchesWithOverlap = squaresWithOverlap.Cast<bool>().Count(x => x);
+
+            Report($"Inches with overlap: {inchesWithOverlap}");
+            Report($"Claim that does not overlap: {claimIdWithNoOverlap}");
         }
-
-
 
         private static void Day2() {
             var boxIds = File.ReadLines("inputs/Day2Input.txt").OrderBy(x => x).ToList();
