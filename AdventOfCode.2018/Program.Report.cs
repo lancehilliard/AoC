@@ -6,7 +6,7 @@ namespace AdventOfCode._2018 {
         static void Report(string x, [CallerMemberName] string callerMemberName = null) {
             var elapsed = Timer.Elapsed;
             Console.WriteLine($"[{(_lastElapsedReported.Milliseconds.Equals(0) ? " " : "+")}{elapsed-_lastElapsedReported}] {callerMemberName}: {x}");
-            _lastElapsedReported = elapsed;
+            _lastElapsedReported = Timer.Elapsed;
         }
     }
 }
