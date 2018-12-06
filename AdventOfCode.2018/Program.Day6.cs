@@ -16,8 +16,8 @@ namespace AdventOfCode._2018 {
             var gridWidth = 700;
             var gridHeight = 700;
             var grid = new int?[gridWidth,gridHeight];
-            for (int gridX = 1; gridX <= gridWidth; gridX++) {
-                for (int gridY = 1; gridY <= gridHeight; gridY++) {
+            for (int gridX = 0; gridX < gridWidth; gridX++) {
+                for (int gridY = 0; gridY < gridHeight; gridY++) {
                     var coordinateIndexWithShortestManhattanDistance = default(int?);
                     var shortestManhattanDistance = int.MaxValue;
                     for (int coordinateIndex = 0; coordinateIndex < coordsSortedByX.Count; coordinateIndex++) {
@@ -33,7 +33,7 @@ namespace AdventOfCode._2018 {
                         }
                     }
                     if (coordinateIndexWithShortestManhattanDistance.HasValue) {
-                        grid[gridX - 1, gridY - 1] = coordinateIndexWithShortestManhattanDistance;
+                        grid[gridX, gridY] = coordinateIndexWithShortestManhattanDistance;
                     }
                 }
             }
@@ -75,12 +75,27 @@ namespace AdventOfCode._2018 {
                 }
             }
 
+            var gridLocationsWithinRegion = 0;
+            for (int gridX = 0; gridX < gridWidth; gridX++) {
+                for (int gridY = 0; gridY < gridHeight; gridY++) {
+                    var totalDistance = 0;
+                    foreach (var coord in coordsSortedByX) {
+                        var coordinateX = coord[0];
+                        var coordinateY = coord[1];
+                        totalDistance += ManhattanDistance(gridX, coordinateX, gridY, coordinateY);
+                    }
+
+                    if (totalDistance < 10000) {
+                        gridLocationsWithinRegion++;
+                    }
+                }
+            }
 
 
             var largestAreaCoordinate = finiteCoordinateAreas.OrderByDescending(x=>x.Value).First();
             var largestArea = largestAreaCoordinate.Value;
             Report($"Part 1: {largestArea}");
-            //star one: 4976
+            Report($"Part 2: {gridLocationsWithinRegion}");
         }
 
         public static int ManhattanDistance(int x1, int x2, int y1, int y2)
