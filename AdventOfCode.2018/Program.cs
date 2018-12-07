@@ -12,7 +12,8 @@ namespace AdventOfCode._2018 {
             //Day3();
             //Day4();
             //Day5();
-            Day6();
+            //Day6();
+            Day7();
             Console.WriteLine($"\nFinished.");
             Console.Write($"Total Runtime: {Timer.Elapsed}");
             Console.ReadKey();
