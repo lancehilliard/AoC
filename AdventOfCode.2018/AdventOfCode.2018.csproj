@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Program.Day3.cs~RF16f2f7f.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="inputs\Day4Input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
